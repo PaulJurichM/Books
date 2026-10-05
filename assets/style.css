@@ -1,0 +1,66 @@
+:root{
+  --bg:#f5f0e6; --paper:#fbf8f1; --ink:#25211b; --soft:#6f675a; --line:#ddd3c0;
+  --accent:#8a3a28; --fs:19px;
+}
+:root[data-theme="dark"]{
+  --bg:#14161a; --paper:#1a1d22; --ink:#d8d2c4; --soft:#8f897c; --line:#2c3038; --accent:#d59566;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#14161a; --paper:#1a1d22; --ink:#d8d2c4; --soft:#8f897c; --line:#2c3038; --accent:#d59566;
+  }
+}
+*{box-sizing:border-box}
+html{font-size:var(--fs);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"PT Serif",Georgia,"Times New Roman",serif;line-height:1.65}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:.18em}
+.top{display:flex;flex-wrap:wrap;gap:.4rem 1rem;align-items:center;justify-content:space-between;
+  padding:.7rem 16px;border-bottom:1px solid var(--line);font-family:"PT Sans",system-ui,sans-serif;font-size:.8rem;
+  position:sticky;top:0;background:var(--bg);z-index:5}
+.brand{font-family:"PT Serif",Georgia,serif;font-weight:700;font-size:1rem;color:var(--ink);text-decoration:none}
+.top nav{display:flex;flex-wrap:wrap;gap:.3rem .8rem;align-items:center}
+.top nav a{color:var(--soft);text-decoration:none}
+.top nav a:hover{color:var(--accent)}
+.ctl{font:inherit;color:var(--soft);background:transparent;border:1px solid var(--line);border-radius:999px;
+  padding:.15rem .6rem;cursor:pointer}
+.ctl:hover{color:var(--accent);border-color:var(--accent)}
+main{max-width:36rem;margin:0 auto;padding:1.6rem 16px 3rem}
+h1{font-size:1.9rem;line-height:1.2;margin:.4rem 0 .4rem;text-wrap:balance}
+article h2{font-size:1rem;font-weight:700;text-align:center;letter-spacing:.08em;margin:2.4rem 0 1.2rem;color:var(--soft)}
+article p{margin:0;text-indent:1.6em;hyphens:auto}
+article h1+.meta+p, article h2+p{text-indent:0}
+article p.verse{text-indent:0;margin:1.1rem 0 1.1rem 1.6em;font-style:italic}
+article.plain p{text-indent:0;margin:0 0 1rem}
+.meta{text-indent:0!important}
+.meta,.crumbs{font-family:"PT Sans",system-ui,sans-serif;font-size:.78rem;color:var(--soft);margin:0 0 1.8rem}
+.crumbs{margin:0 0 .6rem}
+.crumbs a{color:var(--soft)}
+.hero p{color:var(--soft);margin:0 0 1.8rem}
+.col{background:var(--paper);border:1px solid var(--line);border-radius:10px;margin:0 0 .8rem;overflow:hidden}
+.col summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:1rem;align-items:baseline;
+  padding:1rem 1.1rem;font-weight:700;font-size:1.08rem}
+.col summary::-webkit-details-marker{display:none}
+.col summary::before{content:"+";color:var(--accent);font-weight:400;margin-right:.6rem}
+.col[open] summary::before{content:"−"}
+.col summary .ct{flex:1}
+.cn,.min{font-family:"PT Sans",system-ui,sans-serif;font-weight:400;font-size:.75rem;color:var(--soft);white-space:nowrap}
+.col ol,.toc{margin:0;padding:0 1.1rem 0 2.6rem}
+.toc{padding-left:1.6rem;margin-top:1.4rem}
+.col li,.toc li{padding:.38rem 0;border-top:1px solid var(--line)}
+.col li a,.toc li a{text-decoration:none;color:var(--ink)}
+.col li a:hover,.toc li a:hover{color:var(--accent)}
+.col li .min,.toc li .min{float:right;margin-left:.8rem}
+.more{font-family:"PT Sans",system-ui,sans-serif;font-size:.78rem;margin:.6rem 1.1rem 1rem}
+.pn{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--line)}
+.pn a{text-decoration:none;color:var(--ink)}
+.pn a:hover{color:var(--accent)}
+.pn small{display:block;font-family:"PT Sans",system-ui,sans-serif;font-size:.72rem;color:var(--soft)}
+.pn .next{text-align:right}
+.contacts{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:1rem 1.1rem;margin:1.4rem 0}
+.contacts p{margin:.2rem 0!important}
+figure{margin:1.6rem 0;text-align:center}
+figure img{max-width:100%;height:auto;border-radius:6px}
+footer{border-top:1px solid var(--line);padding:1.2rem 16px 2rem;text-align:center;
+  font-family:"PT Sans",system-ui,sans-serif;font-size:.75rem;color:var(--soft)}
+footer a{color:var(--soft)}
+@media (max-width:520px){.top{position:static}h1{font-size:1.55rem}.pn{grid-template-columns:1fr}.pn .next{text-align:left}}
