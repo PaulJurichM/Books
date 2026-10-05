@@ -101,8 +101,11 @@ def main():
             if f.startswith("_") or not f.endswith(".md"):
                 continue
             meta, body = read(os.path.join(p, f))
-            works.append({"slug": re.sub(r"^\d+-", "", f[:-3]), "title": meta.get("title", f),
-                          "body": body, "min": minutes(body)})
+            wslug = re.sub(r"^\d+-", "", f[:-3])
+            pic = next((f"images/{wslug}{e}" for e in (".jpg", ".png", ".webp")
+                        if os.path.exists(os.path.join(p, "images", wslug + e))), "")
+            works.append({"slug": wslug, "title": meta.get("title", f),
+                          "body": body, "min": minutes(body), "pic": pic})
         img = os.path.join(p, "images")
         if os.path.isdir(img):
             shutil.copytree(img, f"{OUT}/{slug}/images")
@@ -147,7 +150,9 @@ def main():
                       f'<a href="index.html">{html.escape(c["title"])}</a></p>')
             body = (f'<article><h1>{html.escape(w["title"])}</h1>'
                     f'<p class="meta">{AUTHOR} · около {w["min"]} мин чтения</p>'
-                    f'{render(w["body"])}</article>{nav}')
+                    + (f'<figure><img src="{w["pic"]}" alt="Иллюстрация к рассказу «{html.escape(w["title"])}»" loading="lazy"></figure>'
+                       if w["pic"] else "")
+                    + f'{render(w["body"])}</article>{nav}')
             open(f"{OUT}/{c['slug']}/{w['slug']}.html", "w", encoding="utf-8").write(
                 page(f'{w["title"]} — {AUTHOR}', body, "../", crumbs))
 
