@@ -24,6 +24,11 @@ def read(path):
     return meta, body.strip()
 
 
+def inline(text):
+    """Экранирует текст; *так* помечается курсив."""
+    return re.sub(r"\*([^*\n]+)\*", r"<em>\1</em>", html.escape(text))
+
+
 def render(body):
     out = []
     for block in re.split(r"\n\s*\n", body):
@@ -32,11 +37,17 @@ def render(body):
             continue
         if block.startswith("## "):
             out.append(f"<h2>{html.escape(block[3:].strip())}</h2>")
+        elif block.startswith(">"):
+            # цитата: эпиграф, письмо, документ; пустая строка «>» делит абзацы
+            text = "\n".join(re.sub(r"^>\s?", "", x) for x in block.split("\n"))
+            paras = ["<p>" + "<br>\n".join(inline(x.strip()) for x in p.split("\n")) + "</p>"
+                     for p in re.split(r"\n\s*\n", text) if p.strip()]
+            out.append("<blockquote>" + "\n".join(paras) + "</blockquote>")
         elif "\n" in block:
-            lines = "<br>\n".join(html.escape(x.strip()) for x in block.split("\n"))
+            lines = "<br>\n".join(inline(x.strip()) for x in block.split("\n"))
             out.append(f'<p class="verse">{lines}</p>')
         else:
-            out.append(f"<p>{html.escape(block.strip())}</p>")
+            out.append(f"<p>{inline(block.strip())}</p>")
     return "\n".join(out)
 
 
@@ -113,7 +124,7 @@ def main():
 
     # главная
     parts = ['<section class="hero"><h1>Проза</h1>'
-             '<p>Четыре сборника детективных рассказов. Читать можно бесплатно и без регистрации, '
+             '<p>Пять сборников детективной прозы. Читать можно бесплатно и без регистрации, '
              'с телефона или с большого экрана, при свете и в темноте.</p></section>']
     for c in cols:
         lis = "\n".join(
@@ -164,7 +175,7 @@ def main():
                  f'<article class="plain"><h1>{html.escape(meta.get("title", ""))}</h1>{body}</article>', ""))
 
     n = sum(len(c["works"]) for c in cols)
-    print(f"Готово: {len(cols)} сборника, {n} произведений → {OUT}/")
+    print(f"Готово: сборников {len(cols)}, произведений {n} → {OUT}/")
 
 
 if __name__ == "__main__":

@@ -29,6 +29,11 @@ h1{font-size:1.9rem;line-height:1.2;margin:.4rem 0 .4rem;text-wrap:balance}
 article h2{font-size:1rem;font-weight:700;text-align:center;letter-spacing:.08em;margin:2.4rem 0 1.2rem;color:var(--soft)}
 article p{margin:0;text-indent:1.6em;hyphens:auto}
 article h1+.meta+p, article h2+p, article figure+p{text-indent:0}
+article blockquote{margin:1.2rem 0 1.2rem 1.6em;padding:0}
+article blockquote p{text-indent:0;margin:0 0 .5rem}
+article blockquote+p{text-indent:0}
+article h2+blockquote{margin:0 0 1.6rem 30%;font-size:.9em;color:var(--soft)}
+article h2+blockquote p{margin:0}
 article p.verse{text-indent:0;margin:1.1rem 0 1.1rem 1.6em;font-style:italic}
 article.plain p{text-indent:0;margin:0 0 1rem}
 .meta{text-indent:0!important}
