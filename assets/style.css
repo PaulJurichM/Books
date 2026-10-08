@@ -65,6 +65,7 @@ article.plain p{text-indent:0;margin:0 0 1rem}
 .contacts p{margin:.2rem 0!important}
 figure{margin:1.6rem 0;text-align:center}
 figure img{max-width:100%;height:auto;border-radius:6px}
+figcaption{margin-top:.5rem;font-family:"PT Sans",system-ui,sans-serif;font-size:.8rem;color:var(--soft)}
 footer{border-top:1px solid var(--line);padding:1.2rem 16px 2rem;text-align:center;
   font-family:"PT Sans",system-ui,sans-serif;font-size:.75rem;color:var(--soft)}
 footer a{color:var(--soft)}

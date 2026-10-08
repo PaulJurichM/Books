@@ -116,7 +116,8 @@ def main():
             pic = next((f"images/{wslug}{e}" for e in (".jpg", ".png", ".webp")
                         if os.path.exists(os.path.join(p, "images", wslug + e))), "")
             works.append({"slug": wslug, "title": meta.get("title", f),
-                          "body": body, "min": minutes(body), "pic": pic})
+                          "body": body, "min": minutes(body), "pic": pic,
+                          "caption": meta.get("caption", "")})
         img = os.path.join(p, "images")
         if os.path.isdir(img):
             shutil.copytree(img, f"{OUT}/{slug}/images")
@@ -124,7 +125,7 @@ def main():
 
     # главная
     parts = ['<section class="hero"><h1>Проза</h1>'
-             '<p>Пять сборников детективной прозы. Читать можно бесплатно и без регистрации, '
+             '<p>Шесть сборников прозы. Читать можно бесплатно и без регистрации, '
              'с телефона или с большого экрана, при свете и в темноте.</p></section>']
     for c in cols:
         lis = "\n".join(
@@ -161,7 +162,8 @@ def main():
                       f'<a href="index.html">{html.escape(c["title"])}</a></p>')
             body = (f'<article><h1>{html.escape(w["title"])}</h1>'
                     f'<p class="meta">{AUTHOR} · около {w["min"]} мин чтения</p>'
-                    + (f'<figure><img src="{w["pic"]}" alt="Иллюстрация к рассказу «{html.escape(w["title"])}»" loading="lazy"></figure>'
+                    + (f'<figure><img src="{w["pic"]}" alt="{html.escape(w["caption"] or "Иллюстрация к рассказу «" + w["title"] + "»")}" loading="lazy">'
+                       + (f'<figcaption>{html.escape(w["caption"])}</figcaption>' if w["caption"] else "") + "</figure>"
                        if w["pic"] else "")
                     + f'{render(w["body"])}</article>{nav}')
             open(f"{OUT}/{c['slug']}/{w['slug']}.html", "w", encoding="utf-8").write(
