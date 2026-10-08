@@ -70,3 +70,14 @@ footer{border-top:1px solid var(--line);padding:1.2rem 16px 2rem;text-align:cent
   font-family:"PT Sans",system-ui,sans-serif;font-size:.75rem;color:var(--soft)}
 footer a{color:var(--soft)}
 @media (max-width:520px){.top{position:static}h1{font-size:1.55rem}.pn{grid-template-columns:1fr}.pn .next{text-align:left}}
+
+ul.nested{list-style:none}
+.col ul.nested{margin:0;padding:0 1.1rem 0 1.1rem}
+ul.toc.nested{padding-left:0}
+ul.nested li{padding:.38rem 0;border-top:1px solid var(--line)}
+ul.nested li a{text-decoration:none;color:var(--ink)}
+ul.nested li a:hover{color:var(--accent)}
+ul.nested li .min{float:right;margin-left:.8rem}
+ul.nested li.sec>a{font-weight:700}
+ul.nested li.sec:has(ul.sub){padding-bottom:0}
+ul.nested ul.sub{list-style:none;margin:.38rem 0 0;padding:0 0 0 1.4rem}

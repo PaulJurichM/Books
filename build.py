@@ -91,6 +91,34 @@ def page(title, content, root, crumbs=""):
 </html>
 """
 
+def toc(works, prefix, cls=""):
+    """Оглавление сборника. Если в сборнике есть разделы (section в шапке файла),
+    рассказы идут вложенным списком под своим разделом и без номеров."""
+    def li(w):
+        return (f'<a href="{prefix}{w["slug"]}.html">{html.escape(w["title"])}</a>'
+                f'<span class="min">{w["min"]} мин</span>')
+    c = f' class="{cls}"' if cls else ""
+    if not any(w["section"] for w in works):
+        return f'<ol{c}>' + "\n".join(f"<li>{li(w)}</li>" for w in works) + "</ol>"
+    out, sub, open_li = [], [], False
+    def close():
+        nonlocal sub, open_li
+        if open_li:
+            out.append((f'<ul class="sub">{"".join(sub)}</ul>' if sub else "") + "</li>")
+        sub, open_li = [], False
+    for w in works:
+        if w["section"]:
+            close()
+            out.append(f'<li class="sec">{li(w)}')
+            open_li = True
+        elif open_li:
+            sub.append(f"<li>{li(w)}</li>")
+        else:
+            out.append(f"<li>{li(w)}</li>")
+    close()
+    cc = (cls + " nested").strip()
+    return f'<ul class="{cc}">' + "\n".join(out) + "</ul>"
+
 
 def main():
     shutil.rmtree(OUT, ignore_errors=True)
@@ -117,7 +145,8 @@ def main():
                         if os.path.exists(os.path.join(p, "images", wslug + e))), "")
             works.append({"slug": wslug, "title": meta.get("title", f),
                           "body": body, "min": minutes(body), "pic": pic,
-                          "caption": meta.get("caption", "")})
+                          "caption": meta.get("caption", ""),
+                          "section": bool(meta.get("section", ""))})
         img = os.path.join(p, "images")
         if os.path.isdir(img):
             shutil.copytree(img, f"{OUT}/{slug}/images")
@@ -128,24 +157,18 @@ def main():
              '<p>Шесть сборников прозы. Читать можно бесплатно и без регистрации, '
              'с телефона или с большого экрана, при свете и в темноте.</p></section>']
     for c in cols:
-        lis = "\n".join(
-            f'<li><a href="{c["slug"]}/{w["slug"]}.html">{html.escape(w["title"])}</a>'
-            f'<span class="min">{w["min"]} мин</span></li>' for w in c["works"])
         parts.append(
             f'<details class="col"><summary><span class="ct">{html.escape(c["title"])}</span>'
             f'<span class="cn">{len(c["works"])}</span></summary>'
-            f'<ol>{lis}</ol>'
+            + toc(c["works"], c["slug"] + "/") +
             f'<p class="more"><a href="{c["slug"]}/index.html">Открыть сборник отдельной страницей</a></p></details>')
     open(f"{OUT}/index.html", "w", encoding="utf-8").write(page(SITE, "\n".join(parts), ""))
 
     # сборники и рассказы
     for c in cols:
         os.makedirs(f"{OUT}/{c['slug']}", exist_ok=True)
-        lis = "\n".join(
-            f'<li><a href="{w["slug"]}.html">{html.escape(w["title"])}</a>'
-            f'<span class="min">{w["min"]} мин</span></li>' for w in c["works"])
         about = render(c["about"]) if c["about"] else ""
-        body = f'<h1>{html.escape(c["title"])}</h1>{about}<ol class="toc">{lis}</ol>'
+        body = f'<h1>{html.escape(c["title"])}</h1>{about}{toc(c["works"], "", "toc")}'
         crumbs = '<p class="crumbs"><a href="../index.html">Все сборники</a></p>'
         open(f"{OUT}/{c['slug']}/index.html", "w", encoding="utf-8").write(
             page(f'{c["title"]} — {AUTHOR}', body, "../", crumbs))
