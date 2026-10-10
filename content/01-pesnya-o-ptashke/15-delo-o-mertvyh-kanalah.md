@@ -1,4 +1,6 @@
 ---
+part: Мертвые каналы. Дела трех
+alias: mertvye-kanaly
 title: Дело о мертвых каналах
 source: https://proza.ru/2026/05/24/1791
 date: 24.05.2026

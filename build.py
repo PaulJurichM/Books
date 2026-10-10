@@ -95,9 +95,28 @@ def toc(works, prefix, cls=""):
     """Оглавление сборника. Если в сборнике есть разделы (section в шапке файла),
     рассказы идут вложенным списком под своим разделом и без номеров."""
     def li(w):
+        if w["url"]:  # внешняя ссылка (хронотопы): открывается в новой вкладке
+            return (f'<a href="{html.escape(w["url"])}" target="_blank" rel="noopener">'
+                    f'{html.escape(w["title"])}</a><span class="min">↗</span>')
         return (f'<a href="{prefix}{w["slug"]}.html">{html.escape(w["title"])}</a>'
                 f'<span class="min">{w["min"]} мин</span>')
     c = f' class="{cls}"' if cls else ""
+    if any(w["part"] for w in works):
+        # сборник из частей (part в шапке первого файла части): подзаголовок и сквозная нумерация
+        out, items, start = [], [], 1
+        def flush():
+            nonlocal items, start
+            if items:
+                out.append(f'<ol{c} start="{start}">' + "\n".join(items) + "</ol>")
+                start += len(items)
+            items = []
+        for w in works:
+            if w["part"]:
+                flush()
+                out.append(f'<h3 class="part">{html.escape(w["part"])}</h3>')
+            items.append(f"<li>{li(w)}</li>")
+        flush()
+        return "\n".join(out)
     if not any(w["section"] for w in works):
         return f'<ol{c}>' + "\n".join(f"<li>{li(w)}</li>" for w in works) + "</ol>"
     out, sub, open_li = [], [], False
@@ -146,15 +165,21 @@ def main():
             works.append({"slug": wslug, "title": meta.get("title", f),
                           "body": body, "min": minutes(body), "pic": pic,
                           "caption": meta.get("caption", ""),
-                          "section": bool(meta.get("section", ""))})
+                          "section": bool(meta.get("section", "")),
+                          "part": meta.get("part", ""), "url": meta.get("url", ""),
+                          "alias": meta.get("alias", "")})
         img = os.path.join(p, "images")
         if os.path.isdir(img):
             shutil.copytree(img, f"{OUT}/{slug}/images")
         cols.append({"slug": slug, "title": cmeta.get("title", d), "about": cbody, "works": works})
 
     # главная
+    nprose = sum(1 for c in cols if not all(w["url"] for w in c["works"]))
+    word = {1: "Один сборник", 2: "Два сборника", 3: "Три сборника", 4: "Четыре сборника",
+            5: "Пять сборников", 6: "Шесть сборников", 7: "Семь сборников",
+            8: "Восемь сборников", 9: "Девять сборников"}.get(nprose, f"{nprose} сборников")
     parts = ['<section class="hero"><h1>Проза</h1>'
-             '<p>Шесть сборников прозы. Читать можно бесплатно и без регистрации, '
+             f'<p>{word} прозы. Читать можно бесплатно и без регистрации, '
              'с телефона или с большого экрана, при свете и в темноте.</p></section>']
     for c in cols:
         parts.append(
@@ -172,9 +197,23 @@ def main():
         crumbs = '<p class="crumbs"><a href="../index.html">Все сборники</a></p>'
         open(f"{OUT}/{c['slug']}/index.html", "w", encoding="utf-8").write(
             page(f'{c["title"]} — {AUTHOR}', body, "../", crumbs))
-        for i, w in enumerate(c["works"]):
-            prev = c["works"][i - 1] if i else None
-            nxt = c["works"][i + 1] if i + 1 < len(c["works"]) else None
+        # старые адреса (сборник раньше был отдельным): страницы-переадресации
+        alias = ""
+        for w in c["works"]:
+            alias = w["alias"] if w["part"] else alias
+            if alias:
+                os.makedirs(f"{OUT}/{alias}", exist_ok=True)
+                for name, to in ((w["slug"], f'../{c["slug"]}/{w["slug"]}.html'),
+                                 ("index", f'../{c["slug"]}/index.html')):
+                    open(f"{OUT}/{alias}/{name}.html", "w", encoding="utf-8").write(
+                        f'<!doctype html><html lang="ru"><meta charset="utf-8">'
+                        f'<meta http-equiv="refresh" content="0; url={to}">'
+                        f'<link rel="canonical" href="{to}"><title>{html.escape(c["title"])}</title>'
+                        f'<p><a href="{to}">Страница переехала</a></p></html>')
+        reads = [w for w in c["works"] if not w["url"]]
+        for i, w in enumerate(reads):
+            prev = reads[i - 1] if i else None
+            nxt = reads[i + 1] if i + 1 < len(reads) else None
             nav = '<nav class="pn">'
             nav += (f'<a class="prev" href="{prev["slug"]}.html"><small>Назад</small>{html.escape(prev["title"])}</a>'
                     if prev else '<span></span>')
