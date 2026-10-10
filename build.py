@@ -200,7 +200,7 @@ def main():
         # старые адреса (сборник раньше был отдельным): страницы-переадресации
         alias = ""
         for w in c["works"]:
-            alias = w["alias"] if w["part"] else alias
+            alias = w["alias"] or alias
             if alias:
                 os.makedirs(f"{OUT}/{alias}", exist_ok=True)
                 for name, to in ((w["slug"], f'../{c["slug"]}/{w["slug"]}.html'),
