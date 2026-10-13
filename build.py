@@ -25,8 +25,9 @@ def read(path):
 
 
 def inline(text):
-    """Экранирует текст; *так* помечается курсив."""
-    return re.sub(r"\*([^*\n]+)\*", r"<em>\1</em>", html.escape(text))
+    """Экранирует текст; *так* помечается курсив, [текст](https://…) — ссылка."""
+    t = re.sub(r"\*([^*\n]+)\*", r"<em>\1</em>", html.escape(text))
+    return re.sub(r"\[([^\]]+)\]\((https?://[^)\s]+)\)", r'<a href="\2">\1</a>', t)
 
 
 def render(body):
