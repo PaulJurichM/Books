@@ -24,13 +24,33 @@ def read(path):
     return meta, body.strip()
 
 
+_FN = None  # сноски текущего текста: {метка: номер}
+
+
 def inline(text):
-    """Экранирует текст; *так* помечается курсив, [текст](https://…) — ссылка."""
+    """Экранирует текст; *так* помечается курсив, [текст](https://…) — ссылка,
+    [^метка] — сноска (определение: строка «[^метка]: текст» в конце файла)."""
     t = re.sub(r"\*([^*\n]+)\*", r"<em>\1</em>", html.escape(text))
-    return re.sub(r"\[([^\]]+)\]\((https?://[^)\s]+)\)", r'<a href="\2">\1</a>', t)
+    t = re.sub(r"\[([^\]^]+)\]\((https?://[^)\s]+)\)", r'<a href="\2">\1</a>', t)
+    if _FN is not None:
+        def ref(m):
+            k = m.group(1)
+            first = k not in _FN
+            n = _FN.setdefault(k, len(_FN) + 1)
+            back = f' id="fnref-{n}"' if first else ""
+            return f'<sup class="fn"><a{back} href="#fn-{n}">{n}</a></sup>'
+        t = re.sub(r"\[\^([^\]\s]+)\]", ref, t)
+    return t
 
 
 def render(body):
+    global _FN
+    notes = {}
+    def grab(m):
+        notes[m.group(1)] = m.group(2).strip()
+        return ""
+    body = re.sub(r"^\[\^([^\]\s]+)\]:[ \t]*(.+)$", grab, body, flags=re.M)
+    _FN = {} if notes else None
     out = []
     for block in re.split(r"\n\s*\n", body):
         block = block.strip("\n")
@@ -49,6 +69,13 @@ def render(body):
             out.append(f'<p class="verse">{lines}</p>')
         else:
             out.append(f"<p>{inline(block.strip())}</p>")
+    if notes:
+        items = []
+        for k, n in sorted(_FN.items(), key=lambda kv: kv[1]):
+            items.append(f'<li id="fn-{n}">{inline(notes.get(k, ""))} '
+                         f'<a class="back" href="#fnref-{n}" aria-label="Вернуться к тексту">↩</a></li>')
+        out.append('<section class="notes"><h2>Примечания</h2><ol>' + "\n".join(items) + "</ol></section>")
+    _FN = None
     return "\n".join(out)
 
 
