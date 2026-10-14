@@ -87,3 +87,17 @@ ul.nested ul.sub{list-style:none;margin:.38rem 0 0;padding:0 0 0 1.4rem}
 .col .part{margin:.9rem 1.1rem .4rem}
 .col .part:first-of-type{margin-top:.2rem}
 .part+.toc{margin-top:0}
+
+/* сноски и примечания */
+html{scroll-behavior:smooth}
+sup.fn{line-height:0;font-family:"PT Sans",system-ui,sans-serif;font-size:.68em;font-weight:700}
+sup.fn a{color:var(--accent);text-decoration:none;padding:0 .12em}
+sup.fn a:hover{text-decoration:underline}
+[id^="fnref-"],[id^="fn-"]{scroll-margin-top:5rem}
+.notes{margin-top:2.6rem;padding-top:1rem;border-top:1px solid var(--line);font-size:.92em}
+.notes h2{margin-top:0}
+.notes ol{padding-left:1.4em}
+.notes li{margin:.5rem 0;color:var(--ink)}
+.notes li:target{background:color-mix(in srgb,var(--accent) 12%,transparent);border-radius:4px}
+sup.fn a:target{background:color-mix(in srgb,var(--accent) 18%,transparent);border-radius:3px}
+.notes .back{text-decoration:none;color:var(--accent);margin-left:.2em}
