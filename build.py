@@ -100,6 +100,7 @@ def page(title, content, root, crumbs=""):
 <header class="top">
   <a class="brand" href="{root}index.html">{AUTHOR}</a>
   <nav>
+    <a href="/creative/">← Творчество</a>
     <a href="{root}index.html">Сборники</a>
     <a href="{root}ekranizaciya.html">Экранизация</a>
     <button class="ctl" id="fs-down" type="button" aria-label="Уменьшить шрифт">A−</button>
@@ -112,7 +113,7 @@ def page(title, content, root, crumbs=""):
 {content}
 </main>
 <footer>
-  <p>© {AUTHOR}, 2026. Читать можно свободно. <a href="{root}ekranizaciya.html">Экранизация и права</a></p>
+  <p>© {AUTHOR}, 2026. Читать можно свободно. <a href="{root}ekranizaciya.html">Экранизация и права</a> · <a href="/">malari.me</a></p>
 </footer>
 <script src="{root}assets/site.js"></script>
 </body>
