@@ -56,7 +56,9 @@ def render(body):
         block = block.strip("\n")
         if not block.strip():
             continue
-        if block.startswith("## "):
+        if block.strip() in ("⁂", "* * *"):
+            out.append('<p class="sep">⁂</p>')
+        elif block.startswith("## "):
             out.append(f"<h2>{html.escape(block[3:].strip())}</h2>")
         elif block.startswith(">"):
             # цитата: эпиграф, письмо, документ; пустая строка «>» делит абзацы
